@@ -3,6 +3,6 @@ Create unique wordlists from urls
 
 ## Usage
 ```
-(crow:crow "urls.list" "output.list")
+(crow:collect-from-file "urls.list" "output.list")
 ```
 ## Installation
