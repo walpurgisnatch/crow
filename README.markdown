@@ -22,3 +22,11 @@ Dont forget to put `~/.roswell/bin` into your path variable.
 ```
 ros install walpurgisnatch/crow
 ```
+
+## Copyright
+
+Copyright (c) 2021 Walpurgisnatch
+
+## License
+
+Licensed under the MIT License.
