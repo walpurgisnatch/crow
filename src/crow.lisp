@@ -9,9 +9,7 @@
 
 (in-package :crow)
 
-
-(defparameter *common* '("and" "or" "on" "the" "a" "com" "ru" "net"))
-
+(defparameter *ignore-list* '("" "http" "and" "or" "on" "the" "a" "com" "ru" "net"))
 
 (defun substp (regex item)
     (if (scan-to-strings regex item)
@@ -24,21 +22,18 @@
              (or (string= "" item)
                  (substp "http" item)))
         (numberp (parse-integer item :junk-allowed t))
-        (member item *common*)))
-
-
-(defmacro read-from-write-to (file to &body body)
-    `(with-open-file (input ,file)
-         (with-open-file (output ,to :direction :output :if-exists :supersede)
-             (loop for line = (read-line input nil)
-                   while line do (progn ,@body)))))
+        (member item *ignore-list* :test #'equal)))
 
 (defun collect-from-file (from to)
-        (read-from-write-to from to
-            (let* ((parts (split-url (string-trim '(#\^M) line)))
-                   (wordlist (create-wordlist parts)))
-                (loop for item in wordlist when (not (ignore-item item)) do
-                  (write-line item output)))))
+    (with-open-file (input from)
+        (with-open-file (output to :direction :output :if-exists :supersede)
+            (loop for line = (read-line input nil)
+                  while line do 
+                    (let* ((parts (split-url (string-trim '(#\^M) line)))
+                           (wordlist (create-wordlist parts)))
+                        (loop for item in wordlist when (not (ignore-item item)) do
+                          (progn (write-line item output)
+                                 (pushnew item *ignore-list*))))))))
 
 (defun split-url (url)
     (let ((items (split "[.]|[/]|[?]" url)))
