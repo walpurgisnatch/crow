@@ -36,20 +36,19 @@
                                  (pushnew item *ignore-list*))))))))
 
 (defun split-url (url)
-    (let ((items (split "[.]|[/]|[?]" url)))
-        (loop for item in items
-              collect item)))
+    (split "[.]|[/]|[?]" url))
 
 (defun create-wordlist (parts)
-    (append (butlast parts)
-            (arguments-from-url parts)
-            (arguments-values-from-url parts)))
+    (let ((args (get-args (car (last parts)))))
+        (append (butlast parts)
+                (arguments args)
+                (arguments-values args))))
 
-(defun arguments-from-url (list)
-    (mapcar #'car (get-args (car (last list)))))
+(defun arguments (args)
+    (mapcar #'car args))
 
-(defun arguments-values-from-url (list)
-     (mapcar #'car (mapcar #'cdr (get-args (car (last list))))))
+(defun arguments-values (args)
+     (mapcar #'cadr args))
 
 (defun get-args (url)
     (let ((parts (all-matches-as-strings "([a-zA-Z_%0-9-]*?)=.*?(&|$)" url)))
