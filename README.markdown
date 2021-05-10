@@ -6,12 +6,12 @@ Create unique wordlists from urls
 ### Roswell
 If installed with roswell, simply call
 ```
-$ crow urls.list output.list
+$ crow urls.list dirs.list args.list
 ```
 
 ### From lisp
 ```
-(crow:collect-from-file "urls.list" "output.list")
+(crow:collect-from-file "urls.list" "dirs.list" "args.list")
 ```
 
 ## Installation
