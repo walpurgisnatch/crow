@@ -12,6 +12,7 @@
 (defparameter *ignore-list* '("" "http" "and" "or" "on" "the" "a" "com" "ru" "net" "org"))
 (defparameter *dirs* (make-hash-table :test 'equalp))
 (defparameter *args* (make-hash-table :test 'equalp))
+(defparameter *values* (make-hash-table :test 'equalp))
 
 (defun substp (regex item)
     (declare (type simple-string regex item))
@@ -25,7 +26,7 @@
         (string= "" item)
         (substp "http" item)))
 
-(defun collect-from-file (from dirs args &optional (buffer-size 8192))
+(defun collect-from-file (from dirs args values &optional (buffer-size 8192))
     (declare (optimize (speed 3) (safety 2))
              (type fixnum buffer-size))
     (let ((buffer (make-array buffer-size :element-type 'character))
@@ -37,6 +38,7 @@
               (when (< end buffer-size)
                   (write-to dirs *dirs*)
                   (write-to args *args*)
+                  (write-to values *values*)
                   (return))
               (setf (subseq buffer 0) (subseq buffer temp buffer-size))
               (setf end (read-sequence buffer in :start (- buffer-size temp)))
@@ -68,12 +70,15 @@
             (sethash *dirs* parts))))
                     
 (defun parse-args (url)
-    (declare (type simple-string url))
-    (handler-case 
-        (let ((args (quri:uri-query-params (quri:uri url))))
-            (when args
-                (mapcar #'(lambda (item) (sethash *args* (list (car item) (cdr item)))) args)))
-      (error nil)))
+    (flet ((hash-this (cons)
+               (progn (sethash *args* (list (car cons)))
+                      (sethash *values* (list (cdr cons))))))
+        (declare (type simple-string url))
+        (handler-case 
+            (let ((args (quri:uri-query-params (quri:uri url))))
+                (when args
+                    (mapcar #'hash-this args)))
+          (error nil))))
 
 (defun sethash (table entries)
     (loop for entry in entries
@@ -81,3 +86,4 @@
                     (not (ignore-item entry))
                     (null (nth-value 1 (gethash entry table))))
             do (setf (gethash entry table) entry)))
+

@@ -12,10 +12,10 @@ exec ros -Q -- $0 "$@"
   (:use :cl))
 (in-package :ros.script.crow.3827001018)
 
-(defun main (source dirs args &rest argv)
+(defun main (source dirs args values &rest argv)
     (declare (ignorable argv))
     (handler-case
-        (crow:collect-from-file source dirs args)
+        (crow:collect-from-file source dirs args values)
       (error (e)
           (format *standard-output* "~&Error: ~A~%" e)
           (uiop:quit -1))))

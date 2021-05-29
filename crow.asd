@@ -1,5 +1,5 @@
 (defsystem "crow"
-    :version "0.2.0"
+    :version "0.2.4"
     :author "Walpurgisnatch"
     :license "MIT"
     :depends-on ("cl-ppcre"
