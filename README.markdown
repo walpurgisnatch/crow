@@ -1,7 +1,8 @@
 # Crow
-Create unique wordlists from urls
+Create unique wordlists from list of urls.
 
 ## Usage
+Fetch a couple of millions urls from wayback machine and then feed them to 'Crow' and it will give you 3 wordlist files with previously used directories, arguments and it's values.
 
 ### Roswell
 If installed with roswell, simply call
